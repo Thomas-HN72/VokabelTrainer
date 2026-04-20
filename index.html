@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vokabeltrainer - Für Justin</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <h1 class="brand-title">ߓꠖokabeltrainer</h1>
+                </div>
+                <div class="navbar-menu">
+                    <button class="nav-btn active" data-page="home">
+                        <span class="nav-icon">ߏ༯span>
+                        <span class="nav-label">Start</span>
+                    </button>
+                    <button class="nav-btn" data-page="vocabulary">
+                        <span class="nav-icon">ߓ�span>
+                        <span class="nav-label">Vokabeln</span>
+                    </button>
+                    <button class="nav-btn" data-page="lists">
+                        <span class="nav-icon">ߓ뼯span>
+                        <span class="nav-label">Listen</span>
+                    </button>
+                    <button class="nav-btn" data-page="learn">
+                        <span class="nav-icon">ߎ㼯span>
+                        <span class="nav-label">Lernen</span>
+                    </button>
+                    <button class="nav-btn" data-page="dashboard">
+                        <span class="nav-icon">ߓ꼯span>
+                        <span class="nav-label">Fortschritt</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+                <div class="container">
+                    <div class="hero-section">
+                        <h2 class="hero-title">Willkommen zum Vokabeltrainer!</h2>
+                        <p class="hero-subtitle">Lerne Englisch-Vokabeln auf spielerische Weise</p>
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="action-card" data-action="learn-mode">
+                            <div class="action-icon">ߎ伯div>
+                            <h3>Karteikarten</h3>
+                            <p>Vokabeln mit Umdreh-Animation lernen</p>
+                        </div>
+                        <div class="action-card" data-action="quiz-mode">
+                            <div class="action-icon">❓</div>
+                            <h3>Quiz</h3>
+                            <p>Teste dein Wissen mit Multiple-Choice</p>
+                        </div>
+                        <div class="action-card" data-action="add-vocab">
+                            <div class="action-icon">➕</div>
+                            <h3>Vokabel hinzufügen</h3>
+                            <p>Neue Vokabeln manuell eingeben</p>
+                        </div>
+                        <div class="action-card" data-action="ocr-upload">
+                            <div class="action-icon">ߓ輯div>
+                            <h3>Foto hochladen</h3>
+                            <p>Vokabeln aus Bildern erkennen</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-preview">
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-total">0</span>
+                            <span class="stat-label">Vokabeln</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-learned">0</span>
+                            <span class="stat-label">Gelernt</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="stat-success">0%</span>
+                            <span class="stat-label">Erfolgsquote</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vocabulary Management Page -->
+            <div id="vocabulary" class="page">
+                <div class="container">
+                    <h2 class="page-title">Vokabelverwaltung</h2>
+
+                    <div class="vocab-toolbar">
+                        <button class="btn btn-primary" id="add-vocab-btn">➕ Neue Vokabel</button>
+                        <button class="btn btn-secondary" id="import-ocr-btn">ߓ蠁us Foto importieren</button>
+                        <input type="text" id="vocab-search" class="search-input" placeholder="Vokabeln durchsuchen...">
+                    </div>
+
+                    <!-- Add/Edit Vocabulary Form -->
+                    <div id="vocab-form-container" class="form-container hidden">
+                        <form id="vocab-form" class="vocab-form">
+                            <h3 id="form-title">Neue Vokabel hinzufügen</h3>
+                            <div class="form-group">
+                                <label for="vocab-german">Deutsch:</label>
+                                <input type="text" id="vocab-german" required placeholder="z.B. Haus">
+                            </div>
+                            <div class="form-group">
+                                <label for="vocab-english">Englisch:</label>
+                                <input type="text" id="vocab-english" required placeholder="z.B. house">
+                            </div>
+                            <div class="form-group">
+                                <label for="vocab-example">Beispielsatz (optional):</label>
+                                <textarea id="vocab-example" placeholder="z.B. The house is big."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="vocab-list">Liste:</label>
+                                <select id="vocab-list">
+                                    <option value="">-- Keine Liste --</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Speichern</button>
+                                <button type="button" class="btn btn-secondary" id="cancel-form-btn">Abbrechen</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- OCR Import Form -->
+                    <div id="ocr-form-container" class="form-container hidden">
+                        <form id="ocr-form" class="ocr-form">
+                            <h3>Vokabeln aus Foto importieren</h3>
+                            <div class="form-group">
+                                <label for="ocr-image">Bild hochladen:</label>
+                                <input type="file" id="ocr-image" accept="image/*" required>
+                            </div>
+                            <div id="ocr-preview" class="ocr-preview hidden">
+                                <img id="ocr-preview-img" alt="Vorschau">
+                            </div>
+                            <div id="ocr-status" class="ocr-status hidden"></div>
+                            <div id="ocr-results" class="ocr-results hidden">
+                                <h4>Erkannte Vokabeln:</h4>
+                                <div id="ocr-results-list"></div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="ocr-process-btn">Foto analysieren</button>
+                                <button type="button" class="btn btn-secondary" id="cancel-ocr-btn">Abbrechen</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Vocabulary List -->
+                    <div class="vocab-list-container">
+                        <div id="vocab-list" class="vocab-list">
+                            <!-- Vokabeln werden hier eingefügt -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lists Management Page -->
+            <div id="lists" class="page">
+                <div class="container">
+                    <h2 class="page-title">Vokabellisten</h2>
+
+                    <div class="lists-toolbar">
+                        <button class="btn btn-primary" id="create-list-btn">➕ Neue Liste</button>
+                    </div>
+
+                    <!-- Create/Edit List Form -->
+                    <div id="list-form-container" class="form-container hidden">
+                        <form id="list-form" class="list-form">
+                            <h3 id="list-form-title">Neue Liste erstellen</h3>
+                            <div class="form-group">
+                                <label for="list-name">Listenname:</label>
+                                <input type="text" id="list-name" required placeholder="z.B. Unit 1">
+                            </div>
+                            <div class="form-group">
+                                <label for="list-description">Beschreibung (optional):</label>
+                                <textarea id="list-description" placeholder="z.B. Grundwortschatz"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Speichern</button>
+                                <button type="button" class="btn btn-secondary" id="cancel-list-form-btn">Abbrechen</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Lists Display -->
+                    <div class="lists-grid" id="lists-grid">
+                        <!-- Listen werden hier eingefügt -->
+                    </div>
+
+                    <!-- Editable Vocabulary List View -->
+                    <div id="list-view-container" class="list-view-container hidden">
+                        <div class="list-view-header">
+                            <button class="btn btn-secondary" onclick="app.backFromListView()">← Zurück</button>
+                            <h3 id="list-view-title"></h3>
+                            <div></div>
+                        </div>
+                        <div id="list-view-table" class="list-view-table">
+                            <!-- Editierbare Vokabelliste wird hier eingefügt -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learn Mode Page -->
+            <div id="learn" class="page">
+                <div class="container">
+                    <h2 class="page-title">Lernmodus</h2>
+
+                    <div id="learn-mode-selector" class="learn-selector">
+                        <div class="selector-group">
+                            <label>Lernmodus:</label>
+                            <div class="mode-buttons">
+                                <button class="mode-btn active" data-mode="flashcards">ߎ䠋arteikarten</button>
+                                <button class="mode-btn" data-mode="quiz">❓ Quiz</button>
+                                <button class="mode-btn" data-mode="typing">⌨️ Schreiben</button>
+                            </div>
+                        </div>
+
+                        <div class="selector-group">
+                            <label>Liste auswählen:</label>
+                            <select id="learn-list-select">
+                                <option value="">-- Alle Vokabeln --</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" id="start-learn-btn">Lernen starten</button>
+                    </div>
+
+                    <!-- Flashcard Learning Mode -->
+                    <div id="flashcard-container" class="learning-container hidden">
+                        <div class="learning-header">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="progress-text">0 / 0</span>
+                        </div>
+
+                        <div class="flashcard-wrapper">
+                            <div class="flashcard" id="flashcard">
+                                <div class="flashcard-inner">
+                                    <div class="flashcard-front">
+                                        <div class="flashcard-label">Deutsch</div>
+                                        <div class="flashcard-content" id="card-german"></div>
+                                    </div>
+                                    <div class="flashcard-back">
+                                        <div class="flashcard-label">Englisch</div>
+                                        <div class="flashcard-content" id="card-english"></div>
+                                        <div class="flashcard-example" id="card-example"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="learning-controls">
+                            <button class="btn btn-secondary" id="flip-card-btn">Umdrehen</button>
+                            <div class="rating-buttons">
+                                <button class="btn btn-danger" id="wrong-btn">❌ Nicht gewusst</button>
+                                <button class="btn btn-success" id="correct-btn">✅ Gewusst</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-secondary" id="exit-learning-btn">Beenden</button>
+                    </div>
+
+                    <!-- Quiz Mode -->
+                    <div id="quiz-container" class="learning-container hidden">
+                        <div class="learning-header">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="quiz-progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="quiz-progress-text">0 / 0</span>
+                        </div>
+
+                        <div class="quiz-question">
+                            <h3 id="quiz-question-text"></h3>
+                            <div id="quiz-options" class="quiz-options"></div>
+                        </div>
+
+                        <div class="quiz-feedback" id="quiz-feedback" style="display: none;"></div>
+
+                        <div class="learning-controls">
+                            <button class="btn btn-primary" id="next-question-btn" style="display: none;">Nächste Frage</button>
+                            <button class="btn btn-secondary" id="exit-quiz-btn">Beenden</button>
+                        </div>
+                    </div>
+
+                    <!-- Typing Mode -->
+                    <div id="typing-container" class="learning-container hidden">
+                        <div class="learning-header">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="typing-progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="typing-progress-text">0 / 0</span>
+                        </div>
+
+                        <div class="typing-question">
+                            <h3>Übersetze ins Englische:</h3>
+                            <div class="typing-word" id="typing-word"></div>
+                            <input type="text" id="typing-input" class="typing-input" placeholder="Gib die Übersetzung ein...">
+                            <div class="typing-feedback" id="typing-feedback"></div>
+                        </div>
+
+                        <div class="learning-controls">
+                            <button class="btn btn-primary" id="submit-typing-btn">Überprüfen</button>
+                            <button class="btn btn-secondary" id="exit-typing-btn">Beenden</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page">
+                <div class="container">
+                    <h2 class="page-title">Fortschritt & Statistiken</h2>
+
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <h3>Gesamte Vokabeln</h3>
+                            <div class="stat-large" id="dash-total-vocabs">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Gelernte Vokabeln</h3>
+                            <div class="stat-large" id="dash-learned-vocabs">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Erfolgsquote</h3>
+                            <div class="stat-large" id="dash-success-rate">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Aktuelle Serie</h3>
+                            <div class="stat-large" id="dash-streak">0</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Lernfortschritt</h3>
+                        <canvas id="progress-chart"></canvas>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h3>Letzte Aktivität</h3>
+                        <div id="activity-list" class="activity-list">
+                            <!-- Aktivitäten werden hier eingefügt -->
+                        </div>
+                    </div>
+
+                    <div class="dashboard-actions">
+                        <button class="btn btn-secondary" id="export-data-btn">ߓ堄aten exportieren</button>
+                        <button class="btn btn-secondary" id="import-data-btn">ߓ䠄aten importieren</button>
+                        <button class="btn btn-danger" id="reset-data-btn">ߔ䠁lles zurücksetzen</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay hidden"></div>
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+    <script src="ocr.js"></script>
+</body>
+</html>
