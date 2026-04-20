@@ -68,15 +68,57 @@ Object.assign(VocabularyTrainer.prototype, {
         const vocabs = [];
         const lines = text.split('\n').filter(line => line.trim().length > 0);
 
+        // Header-Erkennung: Skip typische Überschriften aus Lehrbüchern
+        const headerPatterns = [
+            /^(unit|chapter|section|lesson|lektion|teil|modul)\s*\d*/i,
+            /^(vokabel|vocabulary|words|wordlist|wortliste)\s*(list)?/i,
+            /^(english|deutsch|german|translation|übersetzung)\s*$/i,
+            /^(page|seite)\s*\d+/i,
+            /^\d+\.\s*(edition|auflage)/i,
+            /^topic|thema|subject/i,
+            /^level\s*[1-5]|niveau/i,
+            /^a1|a2|b1|b2|c1|c2/i
+        ];
+
+        // Beschreibungsmuster am Ende von Zeilen entfernen
+        const descriptionPatterns = [
+            /\s*\([^)]*\)\s*$/,           // Klammern mit Inhalt: (noun), (verb)
+            /\s*\[[^\]]*\]\s*$/,          // Eckenklammern: [formal], [informal]
+            /\s*→\s*.*$/i,                // Pfeil mit Nachsatz
+            /\s*see\s+also/i,             // "see also" Verweise
+            /\s*vgl\./i,                  // "vgl." Verweise
+            /\s*\(?\s*(noun|verb|adj|adv|prep|pron|det|conj|interj|phrasal\s*verb)[^)]*\)?\s*$/i,
+            /\s*\d+\.\s*(ausgabe|version|edition)/i
+        ];
+
         // Enhanced parsing with multiple strategies
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
 
-            // Skip lines that are too short or are likely headers
-            if (line.length < 3 || /^(vokabel|english|deutsch|word|translation|unit|chapter|lektion)$/i.test(line)) continue;
+            // Skip leere oder zu kurze Zeilen
+            if (line.length < 3) continue;
+
+            // Skip Überschriften
+            let isHeader = false;
+            for (const pattern of headerPatterns) {
+                if (pattern.test(line)) {
+                    isHeader = true;
+                    break;
+                }
+            }
+            if (isHeader) continue;
 
             // Remove common OCR artifacts and line numbers at the start
             let cleanLine = line.replace(/^[\d.\s)\-]+/, '').trim();
+            if (cleanLine.length < 3) continue;
+
+            // Entferne Beschreibungen am Ende der Zeile
+            for (const pattern of descriptionPatterns) {
+                cleanLine = cleanLine.replace(pattern, '');
+            }
+            cleanLine = cleanLine.trim();
+
+            // Nach dem Bereinigen erneut prüfen ob noch genug Inhalt da ist
             if (cleanLine.length < 3) continue;
 
             let parts = [];
